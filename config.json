@@ -1,0 +1,13 @@
+{
+    "nodes": [  "wss://xls20-sandbox.rippletest.net:51233" ],
+    "cycleFrequency": 60,
+    "accounts": [
+        {
+            "seed": "sEXAMPLESEED",
+            "hexBURN": "OCW",
+            "issuerBURN": "rK9DrarGKnVEo2nYp5MfVRXRYf5yRX3mwD",
+            "memo": "This transaction is to burn the $OCW IOU token, which has been redeemed for it's corresponding NFToken.",
+            "destinationTag": 101
+        }
+    ]
+}
