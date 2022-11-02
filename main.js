@@ -12,6 +12,9 @@ const {
 const {
     getAllTLs
 } = require(`./functions/getAllTLs`)
+const {
+    accountNftOffers
+} = require(`./functions/accountNftOffers`)
 
 //config
 const {
@@ -142,6 +145,33 @@ async function main() {
 
                 var signedTx = wallet.sign(preparedTx)
                 var submittedTx = await xrplClient.submitAndWait(signedTx.tx_blob)
+                console.log(`\n\t\t\t${submittedTx.result.meta.TransactionResult} -> ${signedTx.hash}`)
+            }
+
+            //close expired NFT orders
+            var nftOffers = await accountNftOffers(xrplClient, wallet.classicAddress, "validated")
+
+            var offers = []
+            for(b in nftOffers){
+                if(`Expiration` in nftOffers[b]){
+                    if(Date.now() / 1000 - 946684800 > nftOffers[b].Expiration){ //check if offer has expired
+                        offers.push(nftOffers[b].index)
+                    }
+                }
+            }
+
+            if(offers.length > 0){
+                console.log(`\n\t\tCANCELLING ${comma(offers.length)} Offers From ${wallet.classicAddress}`)
+
+                var prepared = await xrplClient.autofill({
+                    "TransactionType": "NFTokenCancelOffer",
+                    "Account": wallet.classicAddress,
+                    "NFTokenOffers": offers
+                })
+    
+                var signed = wallet.sign(prepared)
+    
+                var submittedTx = await xrplClient.submitAndWait(signed.tx_blob)
                 console.log(`\n\t\t\t${submittedTx.result.meta.TransactionResult} -> ${signedTx.hash}`)
             }
         }
