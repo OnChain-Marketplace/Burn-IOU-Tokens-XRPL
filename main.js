@@ -153,6 +153,7 @@ async function main() {
 
             var offers = []
             for(b in nftOffers){
+                if(offers.length > 250) continue
                 if(`Expiration` in nftOffers[b]){
                     if(Date.now() / 1000 - 946684800 > nftOffers[b].Expiration){ //check if offer has expired
                         offers.push(nftOffers[b].index)
